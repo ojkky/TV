@@ -20,4 +20,8 @@
     <string name="dialog_action_grid">Switch to grid</string>
     <string name="dialog_action_list">Switch to list</string>
 
+
+    <!-- 二开品牌名：flavor 资源优先级高于 main，覆盖上游 app_name（main 中保持零改动） -->
+    <string name="app_name">云影TV</string>
+
 </resources>
