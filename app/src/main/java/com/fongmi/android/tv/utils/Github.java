@@ -5,7 +5,8 @@ import org.json.JSONObject;
 
 public class Github {
 
-    private static final String REPO = "FongMi/Release";
+    // 二开：自更新指向自己的仓库（tag 需保持 vX.Y.Z 格式，Release 附带各 flavor 的 apk）
+    private static final String REPO = "ojkky/TV";
 
     public static String getReleases() {
         return "https://api.github.com/repos/" + REPO + "/releases?per_page=100";

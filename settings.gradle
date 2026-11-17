@@ -26,4 +26,5 @@ include ':chaquo'
 include ':nodejs'
 include ':quickjs'
 include ':thunder'
-rootProject.name = "TV"
+// 二开：工程名改为自己的品牌
+rootProject.name = "YunYingTV"

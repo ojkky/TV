@@ -5,9 +5,11 @@ plugins {
     alias libs.plugins.android.application
 }
 
+// 二开：local.properties 可选，缺失时也能直接 clone 后构建 debug 包
 def localProps = new Properties()
-rootProject.file('local.properties').withInputStream {
-    localProps.load(it)
+def localPropsFile = rootProject.file('local.properties')
+if (localPropsFile.isFile()) {
+    localPropsFile.withInputStream { localProps.load(it) }
 }
 
 android {
@@ -16,7 +18,8 @@ android {
     compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
-        applicationId "com.fongmi.android.tv"
+        // 二开：独立 applicationId，可与上游官方版共存安装
+        applicationId "com.yunying.android.tv"
         minSdk libs.versions.minSdk.get().toInteger()
         targetSdk libs.versions.targetSdk.get().toInteger()
         versionCode 588
@@ -56,21 +59,25 @@ android {
 
     signingConfigs {
         release {
-            storeFile file(localProps['storeFile'])
-            keyAlias localProps['keyAlias']
-            keyPassword localProps['storePassword']
-            storePassword localProps['storePassword']
+            // 二开：只有配置了自己的签名文件才启用 release 签名
+            if (localProps['storeFile'] != null) {
+                storeFile file(localProps['storeFile'])
+                keyAlias localProps['keyAlias']
+                keyPassword localProps['storePassword']
+                storePassword localProps['storePassword']
+            }
         }
     }
 
     buildTypes {
         debug {
-            signingConfig = signingConfigs.release
+            if (localProps['storeFile'] != null) signingConfig = signingConfigs.release
         }
         release {
             minifyEnabled = true
             shrinkResources = true
-            signingConfig = signingConfigs.release
+            // 二开：没有自有签名时回退 debug 签名，保证可安装调试
+            signingConfig = localProps['storeFile'] != null ? signingConfigs.release : signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
